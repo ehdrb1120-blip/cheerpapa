@@ -1,0 +1,32 @@
+{
+  "name": "AI 시계 탐험대 | 초등 시계 보기",
+  "short_name": "시계 탐험대",
+  "description": "바늘을 손으로 직접 돌리며 시계를 익히는 초등 1~3학년용 앱",
+  "lang": "ko",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#e8fbf0",
+  "theme_color": "#2ed573",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

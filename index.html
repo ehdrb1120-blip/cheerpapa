@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>응원파파 자료실</title>
+<meta name="description" content="아이가 막히면 앱을 만드는 아빠. 전부 무료, 가입 없음.">
+<meta property="og:title" content="응원파파 자료실">
+<meta property="og:description" content="아이가 막히면 앱을 만드는 아빠. 전부 무료, 가입 없음.">
+<style>
+:root{
+ --bg:#FFFFFF;--paper:#F7F8FA;--ink:#14171F;--sub:#4A5261;--muted:#7A8394;--line:#E4E7EC;
+ --blue:#1D4ED8;--blueBg:#EFF4FF;--blueLine:#C7D8FF;
+ --amber:#9A5B00;--amberBg:#FFF8EA;--amberLine:#FFE0A8;
+ --green:#04724D;--greenBg:#EDFBF5;--greenLine:#B6EBD6;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);
+ font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+ font-size:16px;line-height:1.65;-webkit-text-size-adjust:100%;padding:0 0 56px}
+.wrap{max-width:640px;margin:0 auto;padding:0 16px}
+
+header{text-align:center;padding:38px 16px 24px}
+.logo{font-size:34px;line-height:1;margin-bottom:12px}
+h1{font-size:26px;letter-spacing:-.6px;margin-bottom:6px}
+.handle{color:var(--blue);font-size:15px;font-weight:700;margin-bottom:12px}
+.lead{color:var(--sub);font-size:15px;line-height:1.6}
+.lead b{color:var(--ink)}
+
+.sec{margin-top:30px}
+.sec-h{display:flex;align-items:baseline;gap:8px;margin-bottom:4px}
+.sec-h h2{font-size:19px;letter-spacing:-.4px}
+.sec-h .cnt{font-size:13px;color:var(--muted);font-weight:700}
+.sec-d{color:var(--muted);font-size:13.5px;margin-bottom:14px;line-height:1.55}
+
+/* 앱 카드 */
+a.app{display:flex;gap:14px;align-items:center;text-decoration:none;color:inherit;
+ border:1px solid var(--blueLine);background:var(--blueBg);border-radius:16px;
+ padding:16px 16px;margin-bottom:12px;transition:transform .12s}
+a.app:active{transform:scale(.985)}
+.app .ico{font-size:30px;line-height:1;flex:none;width:44px;text-align:center}
+.app .body{flex:1;min-width:0}
+.app .nm{font-size:17.5px;font-weight:800;letter-spacing:-.3px;line-height:1.3}
+.app .ds{color:var(--sub);font-size:14px;margin-top:4px;line-height:1.5}
+.app .go{flex:none;width:9px;height:9px;border-right:2.4px solid var(--blue);
+ border-bottom:2.4px solid var(--blue);transform:rotate(-45deg)}
+
+/* 자료 카드 */
+.doc{border:1px solid var(--line);border-radius:16px;margin-bottom:12px;overflow:hidden;background:var(--bg)}
+.doc-h{padding:16px;cursor:pointer;user-select:none;display:flex;gap:14px;align-items:center}
+.doc-h:active{background:var(--paper)}
+.doc .ico{font-size:26px;line-height:1;flex:none;width:44px;text-align:center}
+.doc .nm{font-size:17px;font-weight:800;letter-spacing:-.3px;line-height:1.3}
+.doc .ds{color:var(--sub);font-size:14px;margin-top:4px;line-height:1.5}
+.chev{flex:none;width:9px;height:9px;border-right:2.4px solid var(--muted);
+ border-bottom:2.4px solid var(--muted);transform:rotate(45deg);transition:transform .18s;margin-top:-4px}
+.doc.open .chev{transform:rotate(-135deg);margin-top:3px}
+.doc-b{display:none;padding:0 16px 16px;border-top:1px solid var(--line);padding-top:15px}
+.doc.open .doc-b{display:block}
+
+.tag{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.2px;
+ padding:2px 7px;border-radius:5px;background:#fff;color:var(--muted);
+ border:1px solid var(--line);margin-bottom:6px}
+a.app .tag{background:rgba(255,255,255,.75);color:var(--blue);border-color:var(--blueLine)}
+
+.step{background:var(--paper);border-radius:12px;padding:13px 14px;margin-bottom:11px;font-size:14.5px;line-height:1.65}
+.step b{color:var(--ink)}
+.step-n{display:inline-block;min-width:20px;height:20px;line-height:20px;text-align:center;
+ background:var(--ink);color:#fff;border-radius:5px;font-size:11.5px;font-weight:800;
+ margin-right:7px;vertical-align:1px}
+pre{background:var(--paper);border:1px solid var(--line);border-radius:12px;
+ padding:15px;font-size:13.5px;line-height:1.72;white-space:pre-wrap;word-break:break-word;
+ font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:var(--ink);
+ max-height:330px;overflow-y:auto;-webkit-overflow-scrolling:touch}
+button.copy{width:100%;padding:14px;margin-top:10px;background:var(--blue);color:#fff;
+ border:0;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit}
+button.copy:active{opacity:.85}
+button.copy.done{background:var(--green)}
+.note{background:var(--amberBg);border:1px solid var(--amberLine);border-radius:12px;
+ padding:13px 14px;margin-top:12px;font-size:14px;line-height:1.6;color:var(--sub)}
+.note b{color:var(--amber)}
+.note.g{background:var(--greenBg);border-color:var(--greenLine)}
+.note.g b{color:var(--green)}
+.q{background:var(--blueBg);border:1px solid var(--blueLine);border-radius:10px;
+ padding:11px 13px;margin:8px 0;font-size:14.5px;line-height:1.55}
+.q:before{content:"“";color:var(--blue);font-weight:900}
+.q:after{content:"”";color:var(--blue);font-weight:900}
+ul.chk{list-style:none;margin:10px 0}
+ul.chk li{position:relative;padding-left:26px;margin:9px 0;font-size:14.8px;line-height:1.6}
+ul.chk li:before{content:"";position:absolute;left:2px;top:7px;width:11px;height:6px;
+ border-left:2.4px solid var(--green);border-bottom:2.4px solid var(--green);transform:rotate(-45deg)}
+ul.chk li b{color:var(--ink)}
+.hr{height:1px;background:var(--line);margin:18px 0 14px}
+
+.soon{display:flex;gap:14px;align-items:center;border:1px dashed var(--line);
+ border-radius:16px;padding:15px 16px;margin-bottom:12px;background:var(--paper)}
+.soon .ico{font-size:24px;width:44px;text-align:center;flex:none;opacity:.45}
+.soon .nm{font-size:16px;font-weight:700;color:var(--muted)}
+.soon .ds{font-size:13.5px;color:var(--muted);margin-top:2px}
+
+.follow{background:var(--ink);color:#fff;border-radius:16px;padding:24px 20px;text-align:center;margin-top:30px}
+.follow h2{font-size:19px;margin-bottom:8px;letter-spacing:-.4px}
+.follow p{font-size:14.5px;color:#C6CBD4;line-height:1.6;margin-bottom:16px}
+.follow a{display:block;background:#fff;color:var(--ink);text-decoration:none;
+ padding:14px;border-radius:11px;font-size:16px;font-weight:800}
+footer{text-align:center;color:var(--muted);font-size:12.5px;margin-top:24px;line-height:1.7}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="logo">🛠️</div>
+  <h1>응원파파 자료실</h1>
+  <div class="handle">@cheer.papa</div>
+  <p class="lead">아이가 막히면 <b>앱을 만드는 아빠</b>입니다.<br>전부 무료고, 가입도 없습니다.</p>
+</header>
+
+<div id="root"></div>
+
+<div class="follow">
+  <h2>새로 만들면 인스타에 먼저 올립니다</h2>
+  <p>사춘기 오기 전에 실컷 놀아두는 아빠<br>아이가 막힐 때마다 하나씩 만들고 있어요</p>
+  <a href="https://www.instagram.com/cheer.papa/" target="_blank" rel="noopener">@cheer.papa 팔로우하기</a>
+</div>
+
+<footer>
+  응원파파 · 초2 아들 키우는 중<br>
+  개발자 아님 · 회사 다니던 문과
+</footer>
+
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════
+   앱을 추가하려면 APPS 배열에 한 줄만 넣으면 됩니다.
+   자료는 DOCS, 준비 중인 건 SOON 에 넣으세요.
+   ═══════════════════════════════════════════════════════════ */
+
+const APPS = [
+  {
+    ico: "🕐",
+    tag: "릴스 #5",
+    name: "AI 시계 탐험대",
+    desc: "바늘을 손으로 직접 돌리는 시계 앱. 등교·점심·하교·취침 시각까지 넣었어요.",
+    href: "clock/"
+  },
+];
+
+const DOCS = [
+  {
+    ico: "➗",
+    tag: "릴스 #2",
+    name: "연산 문제 만드는 프롬프트",
+    desc: "구구단·받아올림·나눗셈… 오늘 막힌 것만 골라 100문제. 무료 AI에서 됩니다.",
+    body: `
+      <div class="step"><span class="step-n">1</span><b>ChatGPT·클로드·제미나이</b> 아무거나 켜세요. 전부 무료 버전에서 됩니다.</div>
+      <div class="step"><span class="step-n">2</span>아래 <b>복사 버튼</b>을 누르고 그대로 붙여넣으세요.</div>
+      <div class="step"><span class="step-n">3</span>나온 화면에서 <b>Ctrl+P</b>(맥은 ⌘+P) 누르면 인쇄됩니다.</div>
+      <pre>초등학교 2학년 아이가 풀 구구단 연습문제를 만들어줘.
+
+[문제]
+· 2단부터 9단까지 100문제
+· 한 장에 25문제씩, 4장으로
+· 같은 문제가 반복되지 않게 섞어줘
+· 7단은 훨씬 많이 넣어줘
+
+[형식]
+· 한 장에 5줄 5칸으로 크게
+· 답 쓸 자리는 밑줄로 넉넉하게
+· 장마다 위에 날짜·이름 칸
+· 맨 뒤에 정답지 (몇 장 몇 번인지 표시)
+
+[인쇄 설정 - 이대로 꼭 지켜줘]
+· 인쇄용 HTML 하나로 만들어줘
+· A4 세로, 인쇄 여백은 1.5cm
+· 표 가로는 100%, 5칸이 똑같은 너비를 나눠 갖게
+· 테두리 때문에 폭이 넘치지 않게
+  모든 요소에 box-sizing: border-box 적용
+· 오른쪽 칸이 절대 잘리지 않게 할 것
+· 25문제가 한 장에 다 들어가게 칸 높이 맞추고
+  @page와 page-break로 장을 나눠줘</pre>
+      <button class="copy">프롬프트 복사하기</button>
+      <div class="note"><b>바꿔 쓰는 곳은 3군데예요</b><br>
+      ① <b>2학년</b> → 우리 아이 학년으로<br>
+      ② <b>구구단</b> → 나눗셈·받아올림·한자·영단어 뭐든<br>
+      ③ <b>7단</b> → 오늘 우리 애가 막힌 것으로<br><br>
+      ③번이 진짜 핵심이에요. 그날 막히는 게 매일 다르니까요.</div>
+      <div class="note g"><b>PDF 말고 HTML로 받으세요.</b> PDF는 무료 버전에서 안 될 때가 있는데 HTML은 어디서든 나옵니다.<br><br>
+      인쇄 창에서 여백 <b>기본</b>, 배율 <b>100%</b>인지만 봐주세요.</div>
+    `
+  },
+  {
+    ico: "⚽",
+    tag: "릴스 #4",
+    name: "축구학원 등록 전 체크리스트",
+    desc: "5살부터 9살까지 4년 보내고 정리했어요. 상담 때 그대로 물어보세요.",
+    body: `
+      <div class="step"><span class="step-n">1</span><b>우리 아이 수준에 맞는 반이 있는지</b><br>
+      같은 나이라고 같은 반이 아닙니다. 시작 시기가 다른 아이들을 어떻게 나누는지가 핵심이에요.</div>
+      <div class="q">반이 몇 개인가요? 같은 나이 아이들을 시작 시기로 나누시나요?</div>
+      <div class="q">우리 애는 이제 시작인데, 처음 하는 아이들만 있는 반이 있나요?</div>
+
+      <div class="step" style="margin-top:16px"><span class="step-n">2</span><b>등록 전에 수업을 한 번 보세요</b><br>
+      상담만 받고 등록하면 모릅니다. 직접 보면 우리 애가 따라갈 수 있는지 바로 보여요.</div>
+      <div class="q">등록 전에 참관이나 체험 수업 한 번 가능할까요?</div>
+      <div class="q">체험은 어느 반에서 하게 되나요?</div>
+
+      <div class="step" style="margin-top:16px"><span class="step-n">3</span><b>아이 성향은 부모가 판단하세요</b><br>
+      잘하는 애들 사이에서 더 이 악물고 하는 아이도 있습니다. 위축되는 아이도 있고 자극받는 아이도 있어요.
+      <b>이건 학원이 판단해줄 수 없습니다.</b></div>
+
+      <div class="note"><b>실력보다 흥미를 먼저 잃습니다.</b><br>
+      먼저 시작한 아이들과 실력 차가 있는 상태에서 같은 반에 들어가면 아이가 먼저 위축됩니다. 실력이 안 느는 것보다 이게 더 큰 문제예요.</div>
+
+      <div class="hr"></div>
+      <div class="nm" style="font-size:16px;margin-bottom:8px">4년 보내면서 알게 된 것들</div>
+      <ul class="chk">
+        <li><b>일찍 시작할수록 좋습니다.</b> 공을 만진 시간이 그대로 쌓여요.</li>
+        <li><b>축구화는 제일 발 편한 걸로, 싼 거면 됩니다.</b> 1년에 2켤레씩 나가요.</li>
+        <li><b>230mm가 넘어가면 값이 확 뜁니다.</b> 주니어는 4~5만원인데 성인 사이즈로 넘어가면 7~8만원이에요.</li>
+        <li><b>대회비는 안 아깝습니다.</b> 꾸준히 다녔다면 취미반이든 대회반이든 무조건 나가보세요.</li>
+        <li><b>긴장은 스스로 푸는 법을 배웁니다.</b> 첫 대회부터 서너 번째까지는 많이 떨었는데, 지금은 알아서 풀어요.</li>
+        <li><b>구기 종목이 아니어도 됩니다.</b> 운동 하나는 끝까지 시켜보는 게 좋아요. 그게 자신감으로 이어집니다.</li>
+      </ul>
+    `
+  },
+];
+
+const SOON = [
+  { ico: "📖", name: "초1~초3 교과 프롬프트 모음", desc: "받아올림·시계·분수·받아쓰기… 교과서 진도에 맞춰 하나씩" },
+  { ico: "➕", name: "AI 연산 탐험대", desc: "다음에 만들 앱" },
+];
+
+/* ── 이 아래는 건드릴 필요 없습니다 ───────────────────────── */
+
+const el = (html) => {
+  const t = document.createElement("template");
+  t.innerHTML = html.trim();
+  return t.content.firstElementChild;
+};
+const section = (title, count, desc) =>
+  `<div class="sec-h"><h2>${title}</h2><span class="cnt">${count}</span></div>
+   <div class="sec-d">${desc}</div>`;
+
+const root = document.getElementById("root");
+
+// 앱
+if (APPS.length) {
+  const box = el(`<div class="sec">${section("직접 만든 앱", APPS.length + "개", "아이가 막힌 지점을 보고 만들었어요. 설치 없이 바로 열립니다.")}</div>`);
+  APPS.forEach(a => {
+    box.appendChild(el(`
+      <a class="app" href="${a.href}">
+        <div class="ico">${a.ico}</div>
+        <div class="body">
+          <span class="tag">${a.tag}</span>
+          <div class="nm">${a.name}</div>
+          <div class="ds">${a.desc}</div>
+        </div>
+        <div class="go"></div>
+      </a>`));
+  });
+  root.appendChild(box);
+}
+
+// 자료
+if (DOCS.length) {
+  const box = el(`<div class="sec">${section("자료", DOCS.length + "개", "복사해서 바로 쓰는 프롬프트와 체크리스트예요.")}</div>`);
+  DOCS.forEach((d, i) => {
+    const card = el(`
+      <div class="doc">
+        <div class="doc-h">
+          <div class="ico">${d.ico}</div>
+          <div class="body" style="flex:1;min-width:0">
+            <span class="tag">${d.tag}</span>
+            <div class="nm">${d.name}</div>
+            <div class="ds">${d.desc}</div>
+          </div>
+          <div class="chev"></div>
+        </div>
+        <div class="doc-b">${d.body}</div>
+      </div>`);
+    card.querySelector(".doc-h").addEventListener("click", () => card.classList.toggle("open"));
+    if (i === 0) card.classList.add("open");
+    box.appendChild(card);
+  });
+  root.appendChild(box);
+}
+
+// 준비 중
+if (SOON.length) {
+  const box = el(`<div class="sec">${section("준비 중", SOON.length + "개", "만들고 있어요.")}</div>`);
+  SOON.forEach(s => {
+    box.appendChild(el(`
+      <div class="soon">
+        <div class="ico">${s.ico}</div>
+        <div>
+          <div class="nm">${s.name}</div>
+          <div class="ds">${s.desc}</div>
+        </div>
+      </div>`));
+  });
+  root.appendChild(box);
+}
+
+// 복사 버튼
+root.addEventListener("click", (e) => {
+  const btn = e.target.closest("button.copy");
+  if (!btn) return;
+  e.stopPropagation();
+  const pre = btn.previousElementSibling;
+  if (!pre || pre.tagName !== "PRE") return;
+  const text = pre.innerText;
+  const done = () => {
+    const orig = btn.textContent;
+    btn.textContent = "복사됐어요 ✓";
+    btn.classList.add("done");
+    setTimeout(() => { btn.textContent = orig; btn.classList.remove("done"); }, 2000);
+  };
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(text).then(done).catch(fallback);
+  } else fallback();
+  function fallback() {
+    const ta = document.createElement("textarea");
+    ta.value = text; ta.style.position = "fixed"; ta.style.opacity = 0;
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand("copy"); } catch (_) {}
+    document.body.removeChild(ta); done();
+  }
+});
+</script>
+</body>
+</html>

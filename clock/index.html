@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>⏰ AI 시계 탐험대 | 초등 필수 시계 보기 마스터 모험 | @cheer.papa</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <script>
+        // Force unregister all stale Service Workers and purge browser CacheStorage
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                for (let reg of registrations) { reg.unregister(); }
+            });
+        }
+        if ('caches' in window) {
+            caches.keys().then(function(names) {
+                for (let name of names) { caches.delete(name); }
+            });
+        }
+    </script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Jua&family=Gamja+Flower&family=Pretendard:wght@600;800;900&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#2ed573">
+
+    <!-- ── 홈 화면에 추가 (아이패드 · 갤럭시탭) ───────────────── -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="시계 탐험대">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+    <meta name="description" content="바늘을 손으로 직접 돌리며 시계를 익히는 초등 1~3학년용 웹앱. 설치 없이 열리고, 홈 화면에 추가하면 앱처럼 씁니다.">
+
+    <link rel="stylesheet" href="style.css?v=20260903_1020">
+</head>
+<body class="kids-theme">
+
+    <!-- 1. 100% 독창적 시계 탐험대 인트로 웰컴 스크린 -->
+    <div id="introScreen" class="intro-screen">
+        <canvas id="warpCanvas"></canvas>
+        <div class="intro-content">
+            <div class="mascot-avatar-wrapper">
+                <img src="original_bunny.jpg" alt="토돌이 대장" class="mascot-img-circle">
+                <img src="original_bear.jpg" alt="곰곰이 대원" class="mascot-img-circle">
+            </div>
+            <div class="intro-badge">
+                ✨ 초등 1~3학년 필수! AI 시계 탐험대 🐰🐻
+            </div>
+            <h1 class="intro-title">⏰ AI <span>시계 탐험대</span></h1>
+            <p class="intro-desc">
+                탐험대장 토돌이와 곰곰이가 안내하는 신나는 시계 나라! <br>
+                클래식 알람시계 바늘을 직접 조작하며 몇 시 몇 분인지 100% 마스터해 볼까요?
+            </p>
+            <div class="mode-select-cards">
+                <div class="mode-card active" data-mode="learn">
+                    <span class="mode-icon">📖</span>
+                    <div class="mode-info">
+                        <h3>1. 기초 배우기</h3>
+                        <p>시침(시)과 분침(분) 원리 익히기</p>
+                    </div>
+                </div>
+                <div class="mode-card" data-mode="quiz">
+                    <span class="mode-icon">🎯</span>
+                    <div class="mode-info">
+                        <h3>2. 퀴즈 맞히기</h3>
+                        <p>시계를 보고 몇 시 몇 분인지 선택!</p>
+                    </div>
+                </div>
+                <div class="mode-card" data-mode="game">
+                    <span class="mode-icon">⏱️</span>
+                    <div class="mode-info">
+                        <h3>3. 바늘 맞추기 게임</h3>
+                        <p>제시된 시간에 맞춰 바늘 조작하기!</p>
+                    </div>
+                </div>
+                <div class="mode-card" data-mode="elapsed">
+                    <span class="mode-icon">⏳</span>
+                    <div class="mode-info">
+                        <h3>4. 소요시간 퀴즈</h3>
+                        <p>이동/활동에 걸린 시간 계산하기!</p>
+                    </div>
+                </div>
+            </div>
+
+            <iframe src="about:blank" allow="autoplay" style="display:none"></iframe>
+            <audio id="bgmAudioElem" src="audio/bgm_cheerful.mp3?v=5000" loop autoplay preload="auto"></audio>
+            <div class="intro-bgm-row">
+                <button id="introBgmToggleBtn" class="intro-bgm-btn">
+                    🎵 숲속 마림바 배경음악 켜짐 🔊
+                </button>
+            </div>
+
+            <button id="startExplorationBtn" class="start-btn bouncy-btn">
+                🚀 시계 탐험 시작하기!
+            </button>
+        </div>
+    </div>
+
+    <!-- 2. 메인 앱 컨테이너 -->
+    <div class="app-container hidden-initial" id="mainAppContainer">
+        
+        <!-- 상단 헤더 (1줄 가독성 100% 정돈!) -->
+        <header class="app-header">
+            <div class="brand">
+                <button id="reopenIntroBtn" class="home-btn" title="첫 화면으로 이동">
+                    🏠 홈
+                </button>
+                <img src="original_bunny.jpg" alt="토돌이 대장" class="header-mascot-icon">
+                <h1>⏰ AI <span>시계 탐험대</span></h1>
+            </div>
+
+            <!-- 모드 탭 스위처 -->
+            <div class="mode-nav-tabs">
+                <button class="nav-tab active" data-mode="learn">📖 기초 배우기</button>
+                <button class="nav-tab" data-mode="quiz">🎯 퀴즈 맞히기</button>
+                <button class="nav-tab" data-mode="game">⏱️ 바늘 맞추기</button>
+                <button class="nav-tab" data-mode="elapsed">⏳ 소요시간 퀴즈</button>
+            </div>
+
+            <div class="header-controls">
+                <button id="hintToggleBtn" class="control-btn hint-btn active">
+                    💡 힌트 ON
+                </button>
+                <button id="ttsToggleBtn" class="control-btn active">
+                    🗣️ 목소리 ON
+                </button>
+                <button id="badgeBtn" class="control-btn badge-btn">
+                    🏆 뱃지 <span id="starCount" class="count-pill">0/15</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- 메인 콘텐츠 스테이지 -->
+        <main class="main-stage">
+            
+            <!-- 좌측: 대형 클래식 알람 시계 관람 구역 -->
+            <section class="clock-display-section">
+                
+                <div class="clock-card">
+                    
+                    <!-- 🏡 UI 일체형 캐릭터 동행 가이드 컨테이너 -->
+                    <div class="mascot-speech-container" id="clockSpeechBubble">
+                        <div class="mascot-companion-figure">
+                            <img src="original_bunny.jpg" alt="토돌이 대장" class="mascot-full-img">
+                            <span class="mascot-name-tag">토돌이 대장</span>
+                        </div>
+                        <div class="mascot-speech-bubble">
+                            <div class="speech-main-time" id="speechMainTime">
+                                지금은 <span id="speechBadge" class="time-highlight-badge">03시 15분</span> 이야! ⏰
+                            </div>
+                            <div class="speech-sub-desc" id="speechSubDesc">
+                                <span class="sub-badge red">🔴 시침: 3시</span> <span class="sub-badge green">🟢 분침: 15분</span> 가리키고 있어!
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ✨ 핵심 요청: 클래식 흰색 알람 시계 SVG (쌍둥이 알람 종 + 흰 바탕 + 검은 글씨) -->
+                    <div class="analog-clock-wrapper">
+                        <svg id="analogClockSvg" viewBox="0 0 400 400" class="analog-clock-svg">
+                            <!-- 알람시계 윗부분 귀여운 쌍둥이 종 (Twin Alarm Bells) -->
+                            <path d="M 90,85 A 35,35 0 0,1 155,50 L 140,95 Z" class="alarm-bell" />
+                            <path d="M 310,85 A 35,35 0 0,0 245,50 L 260,95 Z" class="alarm-bell" />
+                            <circle cx="200" cy="45" r="10" fill="#ffc83b" stroke="#d4a017" stroke-width="2" />
+
+                            <!-- 시계 외곽 레트로 알람 테두리 -->
+                            <circle cx="200" cy="215" r="175" class="clock-face-outer" />
+
+                            <!-- ✨ 클래식 선명한 흰색 바탕 (White Clock Face) -->
+                            <circle cx="200" cy="215" r="160" class="clock-face-inner" />
+                            
+                            <!-- 5분 단위 분 힌트 링 (5, 10, 15... 60) -->
+                            <g id="minuteHintsGroup" class="minute-hints-group"></g>
+
+                            <!-- 눈금선 60개 -->
+                            <g id="ticksGroup" class="ticks-group"></g>
+
+                            <!-- ✨ 클래식 또렷한 검은색 시계 숫자 1~12 (Black Numbers) -->
+                            <g id="numbersGroup" class="numbers-group"></g>
+
+                            <!-- ✨ 4차 개편: 진짜 시계처럼 중앙(200, 215) 중심으로 돌아가는 일체형 바늘 그룹 -->
+                            <!-- 시침 바늘 그룹 (Hour Hand Group) -->
+                            <g id="hourHandGroup" class="hand-group hour-group" data-hand="hour">
+                                <line x1="200" y1="232" x2="200" y2="125" stroke="transparent" stroke-width="36" stroke-linecap="round" class="hand-hit-area" />
+                                <line x1="200" y1="232" x2="200" y2="125" class="hand hour-hand" />
+                                <circle cx="200" cy="125" r="7" class="hand-cap hour-cap" />
+                            </g>
+
+                            <!-- 분침 바늘 그룹 (Minute Hand Group) -->
+                            <g id="minuteHandGroup" class="hand-group minute-group" data-hand="minute">
+                                <line x1="200" y1="238" x2="200" y2="78" stroke="transparent" stroke-width="36" stroke-linecap="round" class="hand-hit-area" />
+                                <line x1="200" y1="238" x2="200" y2="78" class="hand minute-hand" />
+                                <circle cx="200" cy="78" r="6" class="hand-cap minute-cap" />
+                            </g>
+
+                            <!-- 시계 중앙 핀 (Center Pin - 맨 위에 위치하여 축 고정) -->
+                            <circle cx="200" cy="215" r="14" class="clock-center-pin-outer" />
+                            <circle cx="200" cy="215" r="7" class="clock-center-pin-inner" />
+                        </svg>
+                    </div>
+
+                    <!-- 디지털 시계 태그 (현재시각 표시) -->
+                    <div class="digital-clock-display" id="digitalClockDisplay">
+                        <span class="digi-label">현재 시각:</span>
+                        <span id="digiTimeText" class="digi-time">03시 00분</span>
+                    </div>
+
+                    <!-- ✨ 3차 개편: 아이들 시인성 100% 극대화 직관적 장난감 조작 패널 -->
+                    <div class="clock-touch-controls">
+                        <!-- 🔴 시간(시침) 조작 카드 -->
+                        <div class="toy-control-card hour-card">
+                            <div class="toy-card-title">🔴 시간 (시침 바늘):</div>
+                            <div class="toy-btns-row">
+                                <button class="toy-btn hour-btn" data-type="hour" data-val="-1">◀ -1시간 이전</button>
+                                <button class="toy-btn hour-btn" data-type="hour" data-val="1">+1시간 다음 ▶</button>
+                            </div>
+                        </div>
+
+                        <!-- 🟢 분(분침) 조작 카드 (아이들 눈높이 2열 쌍 정렬) -->
+                        <div class="toy-control-card min-card">
+                            <div class="toy-card-title">🟢 분 (분침 바늘):</div>
+                            <div class="toy-btns-row min-btns-grid">
+                                <button class="toy-btn min-btn sm" data-type="min" data-val="-1">◀ -1분 뒤로</button>
+                                <button class="toy-btn min-btn sm" data-type="min" data-val="1">+1분 앞으로 ▶</button>
+                                <button class="toy-btn min-btn" data-type="min" data-val="-5">◀ -5분 뒤로</button>
+                                <button class="toy-btn min-btn" data-type="min" data-val="5">+5분 앞으로 ▶</button>
+                                <button class="toy-btn min-btn blue" data-type="min-set" data-val="0">🔔 정각 (00분)</button>
+                                <button class="toy-btn min-btn gold" data-type="min-set" data-val="30">⏰ 30분 (반시)</button>
+                            </div>
+                        </div>
+
+                        <!-- 🖐️ 시계 터치 가이드 태그 -->
+                        <div class="clock-direct-touch-tip">
+                            🖐️ 시계 위를 손가락으로 가볍게 터치해 봐도 시계바늘이 바로 따라와요!
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- 우측: 모드별 인터랙티브 학습 & 퀴즈 패널 (100% 핏 컴팩트 디자인) -->
+            <section class="mode-interactive-section">
+                
+                <!-- [1모드] 기초 배우기 카드 (2x2 컴팩트 핏 레이아웃) -->
+                <div id="panelLearn" class="interactive-panel active">
+                    <div class="panel-header">
+                        <h2>📖 시침과 분침 배우기</h2>
+                        <p>탐험대장 토돌이와 함께 시계의 비밀을 풀어보아요!</p>
+                    </div>
+                    <div class="learn-cards-list learn-grid-2x2">
+                        <div class="learn-item active" data-step="1">
+                            <div class="item-badge red">🔴 시침 (짧은 빨간 바늘)</div>
+                            <h4>"시간(시)을 알려주는 대장바늘!"</h4>
+                            <p>짧고 두꺼운 빨간 바늘은 <strong>숫자 1, 2, 3...</strong>을 직접 가리켜요.</p>
+                        </div>
+                        <div class="learn-item" data-step="2">
+                            <div class="item-badge green">🟢 분침 (긴 초록 바늘)</div>
+                            <h4>"분(분)을 알려주는 날씬바늘!"</h4>
+                            <p>긴 초록 바늘은 시계를 돌 때 <strong>숫자 1은 5분, 2는 10분, 6은 30분!</strong></p>
+                        </div>
+                        <div class="learn-item" data-step="3">
+                            <div class="item-badge gold">⭐ 정각과 반시 (30분)</div>
+                            <h4>"12는 정각, 6은 30분!"</h4>
+                            <p>분침이 12는 <strong>'~시 정각'</strong>, 6은 <strong>'~시 30분 (반시)'</strong>!</p>
+                        </div>
+                        <div class="learn-item" data-step="4">
+                            <div class="item-badge blue">💡 5분 셈하기 꿀팁</div>
+                            <h4>"분침 숫자에 5를 곱해보세요!"</h4>
+                            <p>분침 숫자 × 5 = 분! (예: 숫자 3이면 3 × 5 = 15분!)</p>
+                        </div>
+                    </div>
+
+                    <!-- ⏰ 하루 생활 시각 바로 연습하기 패널 -->
+                    <div class="preset-practice-box">
+                        <div class="preset-title">⏰ 하루 생활 시각 눌러보기:</div>
+                        <div class="preset-btns-grid">
+                            <button class="preset-btn" data-h="8" data-m="30">🏫 08:30 등교</button>
+                            <button class="preset-btn" data-h="12" data-m="0">🍱 12:00 점심</button>
+                            <button class="preset-btn" data-h="3" data-m="30">🏠 03:30 하교</button>
+                            <button class="preset-btn" data-h="9" data-m="0">🌙 09:00 취침</button>
+                        </div>
+                    </div>
+
+                    <button id="learnPracticeBtn" class="action-btn learn-btn">
+                        🎮 연습용 시계로 +5분씩 움직여보기!
+                    </button>
+                </div>
+
+                <!-- [2모드] 퀴즈 맞히기 카드 (100% 균형 핏 레이아웃) -->
+                <div id="panelQuiz" class="interactive-panel">
+                    <div class="panel-header">
+                        <h2>🎯 시계 퀴즈: 몇 시 몇 분일까요?</h2>
+                        <div class="score-pills-row">
+                            <span id="quizScorePill" class="score-pill score">🌟 점수: 0점</span>
+                            <span id="quizStreakPill" class="score-pill streak">🔥 연속 정답: 0회</span>
+                        </div>
+                    </div>
+
+                    <!-- 난이도 선택 바 -->
+                    <div class="difficulty-bar">
+                        <span class="diff-label">🎮 난이도:</span>
+                        <button class="diff-btn active" data-diff="easy">🌱 초급 (정각/30분)</button>
+                        <button class="diff-btn" data-diff="medium">🌿 중급 (5분 단위)</button>
+                        <button class="diff-btn" data-diff="hard">🔥 고급 (1분 단위 & OO분전)</button>
+                    </div>
+
+                    <div class="quiz-question-box">
+                        <span class="quiz-badge">Q. 알람시계 시각은?</span>
+                        <h3 id="quizQuestionText">아래 시계를 보고 올바른 시각을 선택하세요!</h3>
+                    </div>
+
+                    <div class="quiz-options-grid" id="quizOptionsGrid">
+                        <!-- 객관식 4지선다 동적 생성 -->
+                    </div>
+
+                    <!-- 하단 힌트 / 피드백 고정 정돈 영역 (위치 이탈 0% Zero-Shift 슬롯) -->
+                    <div class="quiz-bottom-area">
+                        <div id="quizHintBanner" class="quiz-hint-banner">
+                            🐰 <strong>토돌이 대장의 힌트:</strong> 알람시계 바늘을 유심히 보고 아래 4개 버튼 중 하나를 고르세요!
+                        </div>
+                        <div class="quiz-feedback-box hidden" id="quizFeedback">
+                            <span id="feedbackIcon">🐰</span>
+                            <span id="feedbackText">정답입니다! 대단해요!</span>
+                        </div>
+                        
+                        <button id="quizPlaceholderBtn" class="action-btn next-btn placeholder-btn" disabled>
+                            💡 4개 시각 버튼 중 정답을 골라보세요!
+                        </button>
+                        <button id="nextQuizBtn" class="action-btn next-btn hidden">
+                            다음 시계 퀴즈 도전! ➡️
+                        </button>
+                    </div>
+                </div>
+
+                <!-- [3모드] 시계바늘 맞추기 게임 카드 -->
+                <div id="panelGame" class="interactive-panel">
+                    <div class="panel-header">
+                        <h2>⏱️ 바늘을 맞춰라! 타임어택</h2>
+                        <div class="score-pills-row">
+                            <span id="gameTimerText" class="score-pill score">⏳ 남은 시간: 45초</span>
+                            <span id="gameScorePill" class="score-pill streak">🏆 맞힌 개수: 0개</span>
+                        </div>
+                    </div>
+
+                    <!-- 난이도 선택 바 -->
+                    <div class="difficulty-bar">
+                        <span class="diff-label">🎮 난이도:</span>
+                        <button class="game-diff-btn active" data-diff="easy">🌱 초급 (정각/30분)</button>
+                        <button class="game-diff-btn" data-diff="medium">🌿 중급 (5분 단위)</button>
+                        <button class="game-diff-btn" data-diff="hard">🔥 고급 (1분 단위)</button>
+                    </div>
+
+                    <div class="game-target-box">
+                        <span class="target-label">🎯 만들어야 하는 시각:</span>
+                        <h2 id="gameTargetTimeText" class="target-time">07시 45분</h2>
+                        <p class="target-hint">버튼을 누르거나 시계 위를 손가락으로 직접 드래그해서 바늘을 맞춰보세요!</p>
+                    </div>
+
+                    <div class="game-bottom-area">
+                        <button id="submitGameAnswerBtn" class="action-btn submit-btn bouncy-btn">
+                            ✅ 이 시각이 맞아요! 정답 확인
+                        </button>
+                        <div class="game-feedback-box hidden" id="gameFeedback">
+                            <!-- 동적 피드백 -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- [4모드] 소요시간 퀴즈 카드 -->
+                <div id="panelElapsed" class="interactive-panel">
+                    <div class="panel-header">
+                        <h2>⏳ 소요시간 퀴즈: 얼마나 걸렸을까요?</h2>
+                        <div class="score-pills-row">
+                            <span id="elapsedScorePill" class="score-pill score">🌟 점수: 0점</span>
+                            <span id="elapsedStreakPill" class="score-pill streak">🔥 연속 정답: 0회</span>
+                        </div>
+                    </div>
+
+                    <!-- 난이도 선택 바 -->
+                    <div class="difficulty-bar">
+                        <span class="diff-label">🎮 난이도:</span>
+                        <button class="elapsed-diff-btn active" data-diff="easy">🌱 초급 (정각 단위)</button>
+                        <button class="elapsed-diff-btn" data-diff="medium">🌿 중급 (30분/15분 단위)</button>
+                        <button class="elapsed-diff-btn" data-diff="hard">🔥 고급 (5분 & 오전/오후)</button>
+                    </div>
+
+                    <div class="elapsed-story-box">
+                        <span class="story-badge">🚆 문장제 소요시간 퀴즈</span>
+                        <h3 id="elapsedQuestionTitle">철수가 오전 8시 00분에 기차를 탔는데, 오후 1시 10분에 도착했습니다.</h3>
+                        <p id="elapsedQuestionDetail">기차를 타고 이동한 시간은 총 얼마일까요?</p>
+                    </div>
+
+                    <div class="quiz-options-grid" id="elapsedOptionsGrid">
+                        <!-- 객관식 4지선다 동적 생성 -->
+                    </div>
+
+                    <div class="quiz-bottom-area">
+                        <div id="elapsedHintBanner" class="quiz-hint-banner">
+                            🐰 <strong>토돌이 대장의 힌트:</strong> 시작 시각과 도착 시각 차이를 계산해 보세요!
+                        </div>
+                        <div class="quiz-feedback-box hidden" id="elapsedFeedback">
+                            <span id="elapsedFeedbackIcon">🐰</span>
+                            <span id="elapsedFeedbackText">정답입니다! 대단해요!</span>
+                        </div>
+                        
+                        <button id="elapsedPlaceholderBtn" class="action-btn next-btn placeholder-btn" disabled>
+                            💡 4개 소요시간 버튼 중 정답을 골라보세요!
+                        </button>
+                        <button id="nextElapsedBtn" class="action-btn next-btn hidden">
+                            다음 소요시간 퀴즈 도전! ➡️
+                        </button>
+                        <!-- 오답 선택 시 레이아웃 흐트러짐 없이 정답지 재선택 칸 제공 -->
+                        <div id="elapsedRetryRow" class="quiz-btn-row hidden">
+                            <button id="retryElapsedBtn" class="action-btn retry-btn">
+                                🔄 다시 정답 선택하기
+                            </button>
+                            <button id="skipElapsedBtn" class="action-btn next-btn secondary">
+                                다음 퀴즈 ➡️
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+        </main>
+    </div>
+
+    <!-- 🏆 시계 탐험가 칭찬 상장 모달 -->
+    <div id="badgeModal" class="modal-backdrop hidden">
+        <div class="modal-card certificate-card">
+            <button class="modal-close" id="modalCloseBtn">&times;</button>
+            <div class="cert-header">
+                <span class="trophy-emoji">👑</span>
+                <h2>시계 탐험가 칭찬 상장</h2>
+                <p class="cert-subtitle">AI 시계 탐험대 최고 마스터 인증서</p>
+            </div>
+            <div class="cert-body">
+                <img src="original_bear.jpg" alt="곰곰이 대원" style="width:80px; height:80px; border-radius:50%; border:3px solid #ffc83b; margin-bottom:8px;">
+                <p class="cert-name">멋진 시계 탐험가 어린이 님!</p>
+                <p class="cert-desc">
+                    위 어린이는 탐험대장 토돌이와 곰곰이의 가르침을 따라<br>
+                    시침과 분침의 원리를 완벽히 익히고 시계 보기 모험을 완수하였으므로<br>
+                    이 상장을 주어 크게 칭찬합니다! 🎉🐰🐻
+                </p>
+                <div class="cert-stamp">
+                    <span>⏰ AI 시계 탐험대장 토돌이</span>
+                    <span class="stamp-icon">💮</span>
+                </div>
+            </div>
+            <button class="modal-confirm-btn" id="modalConfirmBtn">
+                🌟 칭찬 상장 받고 계속 모험하기!
+            </button>
+        </div>
+    </div>
+
+    <script src="app.js?v=20260903_1020"></script>
+</body>
+</html>
