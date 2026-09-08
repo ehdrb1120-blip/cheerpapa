@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>🏰 AI 위인 타임머신 모험 | 대한민국 50대 위인 완벽 수록 | @cheer.papa</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Jua&family=Gamja+Flower&family=Pretendard:wght@600;800;900&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- PWA & Apple iPad Meta Tags -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="위인 타임머신">
+    <link rel="apple-touch-icon" href="assets/images/sejong.jpg">
+    <meta name="theme-color" content="#ff477e">
+    <link rel="stylesheet" href="style.css?v=20260903_1110">
+    <script>
+        // Force unregister all stale Service Workers and purge browser CacheStorage
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                for (let reg of registrations) { reg.unregister(); }
+            });
+        }
+        if ('caches' in window) {
+            caches.keys().then(function(names) {
+                for (let name of names) { caches.delete(name); }
+            });
+        }
+    </script>
+</head>
+<body class="kids-theme">
+
+    <!-- 1. 마인크래프트 x 하츄핑 감성 인트로 스크린 -->
+    <div id="introScreen" class="intro-screen">
+        <canvas id="warpCanvas"></canvas>
+        <div class="intro-content">
+            <div class="intro-badge">
+                ✨ 대한민국을 빛낸 50대 위인 완벽 수록! (100% 무료 남성 AI 음성) ✨
+            </div>
+            <h1 class="intro-title">위인 타임머신 <span>모험</span> 🏰</h1>
+            <p class="intro-desc">단군왕검부터 광개토대왕, 세종대왕, 이순신 장군, 유관순 열사까지!<br>50명의 대한민국 영웅들과 함께하는 신나는 시공간 오디세이!</p>
+
+            <!-- 마인크래프트 블록 스타일 타임라인 -->
+            <div class="block-timeline">
+                <div class="block-node active"><span class="icon">📜</span><span class="label">고조선</span></div>
+                <div class="arrow">➡️</div>
+                <div class="block-node active"><span class="icon">⚔️</span><span class="label">삼국시대</span></div>
+                <div class="arrow">➡️</div>
+                <div class="block-node active"><span class="icon">🌊</span><span class="label">고려</span></div>
+                <div class="arrow">➡️</div>
+                <div class="block-node active"><span class="icon">👑</span><span class="label">조선</span></div>
+                <div class="arrow">➡️</div>
+                <div class="block-node active"><span class="icon">🇰🇷</span><span class="label">근현대</span></div>
+            </div>
+
+            <button id="startExplorationBtn" class="start-btn bouncy-btn">
+                🚀 대한민국 50대 위인 모험 시작하기!
+            </button>
+        </div>
+    </div>
+
+    <!-- 2. 시공간 워프 팝업 오버레이 -->
+    <div id="timeWarpOverlay" class="warp-overlay hidden">
+        <div class="pink-portal">
+            <div class="sparkle">✨</div>
+            <div class="sparkle">🌟</div>
+            <div class="sparkle">💖</div>
+        </div>
+        <div class="warp-text">
+            <span class="era-year" id="warpYear">1443년</span>
+            <h2>시공간 워프 중! 슝~</h2>
+            <p id="warpTarget">조선 시대로 이동하고 있어요!</p>
+        </div>
+    </div>
+
+    <!-- 3. 메인 앱 컨테이너 -->
+    <div class="app-container hidden-initial" id="mainAppContainer">
+        
+        <!-- 상단 헤더 -->
+        <header class="app-header">
+            <div class="brand">
+                <button id="reopenIntroBtn" class="home-btn" title="첫 화면으로 이동">
+                    🏠 타임머신 홈
+                </button>
+                <h1>✨ 위인 <span>타임머신</span> (50대 위인)</h1>
+            </div>
+            <div class="header-controls">
+                <button id="soundToggleBtn" class="control-btn active">
+                    🔊 소리 ON
+                </button>
+                <button id="ttsToggleBtn" class="control-btn active">
+                    🗣️ 목소리 ON
+                </button>
+                <button id="badgeBtn" class="control-btn badge-btn">
+                    🏆 보물 뱃지 <span id="badgeCount" class="count-pill">0/50</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- 메인 레이아웃 -->
+        <main class="main-content">
+
+            <!-- 좌측 사이드바: 50대 위인 캐릭터 스크롤 리스트 -->
+            <aside class="gallery-section">
+                <div class="section-title">
+                    <span>🎮</span>
+                    <h2>위인 친구 50명</h2>
+                </div>
+                <div class="figures-grid" id="figuresGrid">
+                    <!-- 동적 생성 -->
+                </div>
+            </aside>
+
+            <!-- 우측: 위인 전체화면 가득 찬 스테이지 -->
+            <section class="fullscreen-stage-section">
+                
+                <!-- 🌟 위인 전체화면 가득 찬 백그라운드 & 포트레이트 관람 구역 -->
+                <div class="fullscreen-figure-stage" id="fullscreenStage">
+                    
+                    <!-- 위인 전체화면 대형 이미지 -->
+                    <div class="hero-image-wrapper">
+                        <img id="heroPortrait" src="assets/images/dangun.jpg" alt="단군왕검" class="hero-fullscreen-img">
+                        <div class="hero-speaking-ring" id="speakingRing"></div>
+                    </div>
+
+                    <!-- 위인 배너 프로필 (상단 오버레이) -->
+                    <div class="stage-top-overlay">
+                        <h2 id="activeName" class="hero-name-title">단군왕검</h2>
+                    </div>
+
+                    <!-- 💬 위인 대화 팝업 자막 레이어 (영화 자막 스타일) -->
+                    <div class="subtitle-chat-layer" id="chatMessages">
+                        <!-- 대화 자막 동적 삽입 -->
+                    </div>
+
+                    <!-- 🎮 하단 아이 터치형 컨트롤 패널 (추천 질문) -->
+                    <div class="stage-bottom-controls">
+                        <div class="quick-title">
+                            💡 질문을 눌러보세요!
+                        </div>
+                        <div class="quick-chips" id="quickChips">
+                            <!-- 질문 칩 동적 생성 -->
+                        </div>
+                    </div>
+
+                </div>
+
+            </section>
+        </main>
+    </div>
+
+    <!-- 보물 뱃지 모달 -->
+    <div id="badgeModal" class="modal-backdrop hidden">
+        <div class="modal-card">
+            <button class="modal-close" id="modalCloseBtn">&times;</button>
+            <div class="modal-header">
+                <span class="trophy-emoji">🏆</span>
+                <h2>대한민국 50대 위인 보물 뱃지</h2>
+                <p>위인들과 대화하고 보물 뱃지를 획득했어요!</p>
+            </div>
+            <div class="badge-grid" id="modalBadgeGrid">
+                <!-- 동적 생성 -->
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js?v=20260903_1110"></script>
+</body>
+</html>

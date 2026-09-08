@@ -1,0 +1,22 @@
+{
+  "name": "AI 위인 타임머신 모험",
+  "short_name": "위인타임머신",
+  "description": "대한민국 50대 위인과 대화하는 시공간 모험 웹 앱",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#1e1e2f",
+  "theme_color": "#ff477e",
+  "icons": [
+    {
+      "src": "assets/images/sejong.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "assets/images/sejong.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg"
+    }
+  ]
+}
